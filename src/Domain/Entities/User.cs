@@ -1,7 +1,8 @@
 namespace Domain.Entities;
 
-public class User : BaseEntity
+public class User : Entity
 {
-    public string Name { get; set; } = default!;
-    public IReadOnlyCollection<Tweet> Tweets { get; private set; } = []; 
+    public string UserName { get; set; } = default!;
+    public string Email { get; set; } = default!;
+    public ICollection<Tweet> Tweets { get; private set; } = []; 
 }
