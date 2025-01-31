@@ -2,7 +2,7 @@ using Domain.Entities;
 
 namespace Domain.Repositories.Base;
 
-public interface IUpdateRepository<T>
+public interface IUpdatableRepository<T>
 where T : Entity
 {
     Task UpdateAsync(T entity);

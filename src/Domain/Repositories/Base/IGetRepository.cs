@@ -2,7 +2,7 @@ using Domain.Entities;
 
 namespace Domain.Repositories.Base;
 
-public interface IGetRepository<T>
+public interface IGetabbleRepository<T>
 where T : Entity
 {
     Task<T> GetAsync(Guid id);

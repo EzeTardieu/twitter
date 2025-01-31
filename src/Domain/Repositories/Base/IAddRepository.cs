@@ -2,8 +2,8 @@ using Domain.Entities;
 
 namespace Domain.Repositories.Base;
 
-public interface IAddRepository<T>
+public interface IAddableRepository<T>
 where T : Entity
 {
-    Task Add(T entity);
+    Task AddAsync(T entity);
 }

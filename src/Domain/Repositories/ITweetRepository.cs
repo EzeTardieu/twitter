@@ -3,7 +3,11 @@ using Domain.Repositories.Base;
 
 namespace Domain.Repositories;
 
-public interface ITweetRepository : IGetRepository<Tweet>, IAddRepository<Tweet>, IDeleteRepository<Tweet>, IUpdateRepository<Tweet>
+public interface ITweetRepository :
+IGetabbleRepository<User>,
+IAddableRepository<User>,
+IDeletableRepository<User>,
+IUpdatableRepository<User>
 {
 
 }
