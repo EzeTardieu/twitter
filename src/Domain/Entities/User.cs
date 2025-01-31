@@ -7,13 +7,11 @@ public class User : Entity
     public ICollection<Tweet> Tweets { get; private set; } = [];
 
     public User(
-        string userName,
-        string email,
-        ICollection<Tweet> tweets
+        string name,
+        string email
         )
     {
-        Name = userName;
+        Name = name;
         Email = email;
-        Tweets = tweets;
     }
 }

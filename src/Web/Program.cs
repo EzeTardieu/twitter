@@ -1,5 +1,13 @@
 
 using Microsoft.OpenApi.Models;
+using Infrastructure.Data.Extensions;
+using Application.UseCases.Users.Commands.CreateUser;
+using Application.UseCases.Users.Queries.GetUsers;
+using Application.UseCases.Users.Queries.GetUserById;
+using Application.UseCases.Users.Commands.DeleteUser;
+using Application.UseCases.Users.Commands.UpdateUser;
+using Domain.Repositories;
+using Infrastructure.Repositories;
 
 namespace Web;
 
@@ -17,6 +25,19 @@ public class Program
         {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
         });
+
+        //Dependency Injection
+        builder.Services.AddInfrastructure();
+
+        builder.Services.AddScoped<IUserRepository,UserRepository>();
+
+        builder.Services
+            .AddScoped<CreateUserService>()
+            .AddScoped<GetUsersService>()
+            .AddScoped<GetUserByIdService>()
+            .AddScoped<DeleteUserService>()
+            .AddScoped<UpdateUserService>()
+            ;
 
         var app = builder.Build();
 

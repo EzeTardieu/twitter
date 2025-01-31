@@ -9,9 +9,8 @@ internal static class UserFactory
     internal static User Create(CreateUserCommand command)
     {
         return new User(
-            userName: command.Name,
-            email: command.Email,
-            []
+            name: command.Name,
+            email: command.Email
         );
     }
     
