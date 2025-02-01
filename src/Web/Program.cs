@@ -10,6 +10,7 @@ using Domain.Repositories;
 using Infrastructure.Repositories;
 using Application.UseCases.Users.Queries.GetUserTweets;
 using Application.UseCases.Tweets.Commands.CreateTweet;
+using Application.UseCases.Users.Commands.FollowUser;
 
 namespace Web;
 
@@ -41,6 +42,8 @@ public class Program
             .AddScoped<DeleteUserService>()
             .AddScoped<UpdateUserService>()
             .AddScoped<GetUserTweetsService>()
+            .AddScoped<GetFollowedService>()
+            .AddScoped<FollowUserService>()
             ;
 
         builder.Services

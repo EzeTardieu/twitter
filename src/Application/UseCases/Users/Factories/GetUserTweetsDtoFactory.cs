@@ -7,6 +7,6 @@ internal static class GetUserTweetsDtoFactory
 {
     internal static GetUserTweetsDto Create(User user)
     {
-        return new GetUserTweetsDto(user.Tweets.Select(TweetDtoFactory.Create).ToArray());
+        return new GetUserTweetsDto(user.Tweets.Select(TweetDtoFactory.Create));
     }
 }

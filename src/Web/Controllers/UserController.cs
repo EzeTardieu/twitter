@@ -1,10 +1,13 @@
 using Application.UseCases.Users.Commands.CreateUser;
 using Application.UseCases.Users.Commands.DeleteUser;
+using Application.UseCases.Users.Commands.FollowUser;
 using Application.UseCases.Users.Commands.UpdateUser;
+using Application.UseCases.Users.Queries.GetFollowing;
 using Application.UseCases.Users.Queries.GetUserById;
 using Application.UseCases.Users.Queries.GetUsers;
 using Application.UseCases.Users.Queries.GetUserTweets;
 using Microsoft.AspNetCore.Mvc;
+using Web.Dto;
 using Web.Factories;
 
 namespace Web.Controllers;
@@ -19,6 +22,8 @@ public class UserController : ControllerBase
     private readonly DeleteUserService _deleteUserService;
     private readonly UpdateUserService _updateUserService;
     private readonly CreateUserService _createUserService;
+    private readonly FollowUserService _followUserService;
+    private readonly GetFollowedService _getFollowedService;
     private readonly GetUserTweetsService _getUserTweetsService;
 
     public UserController(
@@ -28,6 +33,8 @@ public class UserController : ControllerBase
         DeleteUserService deleteUserService,
         UpdateUserService updateUserService,
         CreateUserService createUserService,
+        FollowUserService followUserService,
+        GetFollowedService getFollowedService,
         GetUserTweetsService getUserTweetsService
         )
     {
@@ -37,6 +44,8 @@ public class UserController : ControllerBase
         _deleteUserService = deleteUserService;
         _updateUserService = updateUserService;
         _createUserService = createUserService;
+        _followUserService = followUserService;
+        _getFollowedService = getFollowedService;
         _getUserTweetsService = getUserTweetsService;
     }
 
@@ -79,5 +88,20 @@ public class UserController : ControllerBase
 
         var tweets = await _getUserTweetsService.Execute(GetUserTweetsQueryFactory.Create(userId));
         return Ok(tweets);
+    }
+    [HttpPost("{userId}/follow")]
+    public async Task<IActionResult> FollowUser(Guid userId, FollowUserRequest followUserDto)
+    {
+        FollowUserCommand followUserCommand = FollowUserCommandFactory.Create(userId, followUserDto); 
+        await _followUserService.Execute(followUserCommand);
+        return Ok();
+    }
+    [HttpGet("{userId}/followed")]
+    public async Task<IActionResult> GetFollowed(Guid userId)
+    {
+        GetFollowedQuery getFollowedQuery = GetFollowedQueryFactory.Create(userId); 
+        Application.UseCases.Users.Queries.GetFollowed.GetFollowedDto? users = await _getFollowedService.Execute(getFollowedQuery);
+        var usersResponse = GetFollowedResponseFactory.Create(users);
+        return Ok(usersResponse);
     }
 }

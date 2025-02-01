@@ -47,6 +47,14 @@ public class UserRepository : IUserRepository
             throw new KeyNotFoundException($"User with key {id} does not exist.");
         return user;
     }
+    public async Task<IEnumerable<User>> GetFollowed(Guid userId)
+    {
+        var user = await _dbcontext.Users.Include(user => user.FollowedUsers).SingleOrDefaultAsync(user => user.Id == userId);
+        if(user is null)
+            throw new KeyNotFoundException($"User with key {userId} does not exist.");
+        
+        return user.FollowedUsers;
+    }
 
     public async Task UpdateAsync(User user)
     {

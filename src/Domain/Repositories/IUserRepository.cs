@@ -10,4 +10,5 @@ IDeletableRepository<User>,
 IUpdatableRepository<User>
 {
     Task<User> GetAsync(Guid id, bool includeTweets);
+    Task<IEnumerable<User>> GetFollowed(Guid userId);
 }
