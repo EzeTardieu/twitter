@@ -34,7 +34,8 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetAsync(Guid id)
     {
-        var user = await _dbcontext.Users.FindAsync(id);
+        //TODO: refactor this
+        var user = _dbcontext.Users.Include(user => user.Tweets).SingleOrDefault(user => user.Id.Equals(id));
         if(user is null)
             throw new KeyNotFoundException($"User with key {id} does not exist.");
         return user;
@@ -46,8 +47,8 @@ public class UserRepository : IUserRepository
         if(userToUpdate is null)
             throw new KeyNotFoundException($"User with key {user.Id} does not exist.");
         
-        userToUpdate.Name = user.Name;
-        userToUpdate.Email = user.Email;
+        _dbcontext.Users.Update(user);
+        
         await _dbcontext.SaveChangesAsync();
     }
 }

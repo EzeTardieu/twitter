@@ -1,8 +1,10 @@
+using Application.UseCases.Users.Commands.CreateTweet;
 using Application.UseCases.Users.Commands.CreateUser;
 using Application.UseCases.Users.Commands.DeleteUser;
 using Application.UseCases.Users.Commands.UpdateUser;
 using Application.UseCases.Users.Queries.GetUserById;
 using Application.UseCases.Users.Queries.GetUsers;
+using Application.UseCases.Users.Queries.GetUserTweets;
 using Microsoft.AspNetCore.Mvc;
 using Web.Factories;
 
@@ -18,6 +20,8 @@ public class UserController : ControllerBase
     private readonly DeleteUserService _deleteUserService;
     private readonly UpdateUserService _updateUserService;
     private readonly CreateUserService _createUserService;
+    private readonly CreateTweetService _createTweetService;
+    private readonly GetUserTweetsService _getUserTweetsService;
 
     public UserController(
         ILogger<UserController> logger,
@@ -25,7 +29,9 @@ public class UserController : ControllerBase
         GetUserByIdService getUserByIdService,
         DeleteUserService deleteUserService,
         UpdateUserService updateUserService,
-        CreateUserService createUserService
+        CreateUserService createUserService,
+        CreateTweetService createTweetService,
+        GetUserTweetsService getUserTweetsService
         )
     {
         _logger = logger;
@@ -34,6 +40,8 @@ public class UserController : ControllerBase
         _deleteUserService = deleteUserService;
         _updateUserService = updateUserService;
         _createUserService = createUserService;
+        _createTweetService = createTweetService;
+        _getUserTweetsService = getUserTweetsService;
     }
 
     [HttpGet]
@@ -68,5 +76,21 @@ public class UserController : ControllerBase
         
         await _updateUserService.Execute(command);
         return Ok();
+    }
+    [HttpPost("{userId}/tweets")]
+    public async Task<IActionResult> AddTweetToUser(Guid userId, [FromBody] CreateTweetCommand command)
+    {
+        if (userId != command.UserId)
+            return BadRequest();
+        
+        await _createTweetService.Execute(command);
+        return Ok();
+    }
+    [HttpGet("{userId}/tweets")]
+    public async Task<IActionResult> GetUserTweets(Guid userId)
+    {
+
+        var tweets = await _getUserTweetsService.Execute(GetUserTweetsQueryFactory.Create(userId));
+        return Ok(tweets);
     }
 }

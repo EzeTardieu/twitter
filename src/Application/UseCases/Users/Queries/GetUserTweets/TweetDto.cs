@@ -1,16 +1,12 @@
-namespace Domain.Entities;
+namespace Application.UseCases.Users.Queries.GetUserTweets;
 
-public class Tweet : Entity
+public class TweetDto
 {
     public string Content { get; set; } = default!;
     public DateTime Date { get; set; }
-
-    public Tweet(
-        string content,
-        DateTime date)
+    public TweetDto(string content, DateTime date)
     {
         Content = content;
         Date = date;
     }
-
 }
