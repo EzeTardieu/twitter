@@ -9,5 +9,5 @@ IAddableRepository<User>,
 IDeletableRepository<User>,
 IUpdatableRepository<User>
 {
-
+    Task<User> GetAsync(Guid id, bool includeTweets);
 }

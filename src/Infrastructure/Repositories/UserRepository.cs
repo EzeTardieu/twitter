@@ -34,8 +34,15 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetAsync(Guid id)
     {
-        //TODO: refactor this
-        var user = _dbcontext.Users.Include(user => user.Tweets).SingleOrDefault(user => user.Id.Equals(id));
+        return await GetAsync(id,false);
+    }
+    public async Task<User> GetAsync(Guid id, bool includeTweets)
+    {
+        var usersQuery = _dbcontext.Users.AsQueryable();
+        if(includeTweets)
+           usersQuery = usersQuery.Include(user => user.Tweets); 
+        
+        var user = await usersQuery.SingleOrDefaultAsync(user => user.Id.Equals(id));
         if(user is null)
             throw new KeyNotFoundException($"User with key {id} does not exist.");
         return user;

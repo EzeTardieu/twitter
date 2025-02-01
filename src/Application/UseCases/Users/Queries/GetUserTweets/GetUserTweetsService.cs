@@ -13,7 +13,9 @@ public class GetUserTweetsService
     }
     public async Task<GetUserTweetsDto> Execute(GetUserTweetsQuery query)
     {
-        var user = await _userRepository.GetAsync(query.UserId);
+        var user = await _userRepository.GetAsync(
+            id: query.UserId,
+            includeTweets: true);
         return GetUserTweetsDtoFactory.Create(user);
     }
 }
