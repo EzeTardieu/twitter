@@ -1,3 +1,3 @@
-namespace Application.UseCases.Users.Commands.CreateTweet;
+namespace Application.UseCases.Tweets.Commands.CreateTweet;
 
 public record CreateTweetCommand(Guid UserId ,string Content);

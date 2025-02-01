@@ -1,4 +1,3 @@
-using Application.UseCases.Users.Commands.CreateTweet;
 using Application.UseCases.Users.Commands.CreateUser;
 using Application.UseCases.Users.Commands.DeleteUser;
 using Application.UseCases.Users.Commands.UpdateUser;
@@ -20,7 +19,6 @@ public class UserController : ControllerBase
     private readonly DeleteUserService _deleteUserService;
     private readonly UpdateUserService _updateUserService;
     private readonly CreateUserService _createUserService;
-    private readonly CreateTweetService _createTweetService;
     private readonly GetUserTweetsService _getUserTweetsService;
 
     public UserController(
@@ -30,7 +28,6 @@ public class UserController : ControllerBase
         DeleteUserService deleteUserService,
         UpdateUserService updateUserService,
         CreateUserService createUserService,
-        CreateTweetService createTweetService,
         GetUserTweetsService getUserTweetsService
         )
     {
@@ -40,7 +37,6 @@ public class UserController : ControllerBase
         _deleteUserService = deleteUserService;
         _updateUserService = updateUserService;
         _createUserService = createUserService;
-        _createTweetService = createTweetService;
         _getUserTweetsService = getUserTweetsService;
     }
 
@@ -75,15 +71,6 @@ public class UserController : ControllerBase
             return BadRequest();
         
         await _updateUserService.Execute(command);
-        return Ok();
-    }
-    [HttpPost("{userId}/tweets")]
-    public async Task<IActionResult> AddTweetToUser(Guid userId, [FromBody] CreateTweetCommand command)
-    {
-        if (userId != command.UserId)
-            return BadRequest();
-        
-        await _createTweetService.Execute(command);
         return Ok();
     }
     [HttpGet("{userId}/tweets")]

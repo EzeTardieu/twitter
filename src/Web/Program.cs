@@ -8,8 +8,8 @@ using Application.UseCases.Users.Commands.DeleteUser;
 using Application.UseCases.Users.Commands.UpdateUser;
 using Domain.Repositories;
 using Infrastructure.Repositories;
-using Application.UseCases.Users.Commands.CreateTweet;
 using Application.UseCases.Users.Queries.GetUserTweets;
+using Application.UseCases.Tweets.Commands.CreateTweet;
 
 namespace Web;
 
@@ -32,6 +32,7 @@ public class Program
         builder.Services.AddInfrastructure();
 
         builder.Services.AddScoped<IUserRepository,UserRepository>();
+        builder.Services.AddScoped<ITweetRepository,TweetRepository>();
 
         builder.Services
             .AddScoped<CreateUserService>()
@@ -39,9 +40,11 @@ public class Program
             .AddScoped<GetUserByIdService>()
             .AddScoped<DeleteUserService>()
             .AddScoped<UpdateUserService>()
-            .AddScoped<CreateTweetService>()
             .AddScoped<GetUserTweetsService>()
             ;
+
+        builder.Services
+            .AddScoped<CreateTweetService>();
 
         var app = builder.Build();
 
