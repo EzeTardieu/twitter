@@ -22,7 +22,7 @@ public class UserRepository : IUserRepository
     {
         var user = await _dbcontext.Users.FindAsync(id);
         if(user is null)
-            throw new InvalidOperationException($"User with id {id} does not exist.");
+            throw new KeyNotFoundException($"User with key {id} does not exist.");
         _dbcontext.Users.Remove(user);
         await _dbcontext.SaveChangesAsync();
     }
@@ -36,7 +36,7 @@ public class UserRepository : IUserRepository
     {
         var user = await _dbcontext.Users.FindAsync(id);
         if(user is null)
-            throw new InvalidOperationException($"User with id {id} does not exist.");
+            throw new KeyNotFoundException($"User with key {id} does not exist.");
         return user;
     }
 
@@ -44,7 +44,7 @@ public class UserRepository : IUserRepository
     {
         var userToUpdate = await _dbcontext.Users.FindAsync(user.Id);
         if(userToUpdate is null)
-            throw new InvalidOperationException($"User with id {user.Id} does not exist.");
+            throw new KeyNotFoundException($"User with key {user.Id} does not exist.");
         
         userToUpdate.Name = user.Name;
         userToUpdate.Email = user.Email;
