@@ -11,6 +11,7 @@ using Infrastructure.Repositories;
 using Application.UseCases.Users.Queries.GetUserTweets;
 using Application.UseCases.Tweets.Commands.CreateTweet;
 using Application.UseCases.Users.Commands.FollowUser;
+using Application.UseCases.Tweets.Queries.GetTimeline;
 
 namespace Web;
 
@@ -47,7 +48,9 @@ public class Program
             ;
 
         builder.Services
-            .AddScoped<CreateTweetService>();
+            .AddScoped<CreateTweetService>()
+            .AddScoped<GetTimelineService>()
+            ;
 
         var app = builder.Build();
 

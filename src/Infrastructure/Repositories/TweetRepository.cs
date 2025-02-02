@@ -1,5 +1,7 @@
 using Domain.Entities;
+using Domain.Filters;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
@@ -25,6 +27,13 @@ public class TweetRepository : ITweetRepository
     public Task<IEnumerable<Tweet>> GetAllAsync()
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<Tweet>> GetAllAsync(TweetFilter filter)
+    {
+        return await _dbcontext.Tweets
+            .Include(tweet => tweet.User)
+            .Where(tweet => filter.UsersIds.Contains(tweet.UserId)).ToArrayAsync();
     }
 
     public Task<Tweet> GetAsync(Guid id)
