@@ -15,9 +15,4 @@ public class DeleteTweetService
     {
         await _tweetRepository.DeleteAsync(command.TweetId);
     }
-
-    public async Task Execute(CreateTweetCommand createTweetCommand)
-    {
-        throw new NotImplementedException();
-    }
 }
