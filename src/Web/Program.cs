@@ -18,6 +18,8 @@ using Web.Validators;
 using Application.UseCases.Seeding;
 using Domain.Seeding;
 using Infrastructure.Data.Seeding;
+using Application.UseCases.Tweets.Queries.GetTweet;
+using Application.UseCases.Tweets.Commands.DeleteTweet;
 
 namespace Web;
 
@@ -57,6 +59,8 @@ public class Program
         builder.Services
             .AddScoped<CreateTweetService>()
             .AddScoped<GetTimelineService>()
+            .AddScoped<GetTweetService>()
+            .AddScoped<DeleteTweetService>()
             ;
 
         builder.Services

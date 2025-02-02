@@ -7,6 +7,6 @@ internal static class GetTimelineResponseFactory
 {
     internal static GetTimelineResponse Create(GetTimelineDto getTimelineDto)
     {
-        return new(getTimelineDto.Tweets.Select(TweetResponseFactory.Create), getTimelineDto.TotalCount);
+        return new(getTimelineDto.Tweets.Select(TimelineTweetResponseFactory.Create), getTimelineDto.TotalCount);
     }
 }

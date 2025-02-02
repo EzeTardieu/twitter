@@ -64,8 +64,15 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IResult> Get(Guid id)
     {
-        var user = await _getUserByIdService.Execute(GetUserByIdQueryFactory.Create(id));
-        return Results.Ok(user);
+        try
+        {
+            var user = await _getUserByIdService.Execute(GetUserByIdQueryFactory.Create(id));
+            return Results.Ok(user);
+        }
+        catch (KeyNotFoundException)
+        {
+            return Results.NotFound($"User with ID {id} not found.");
+        }
     }
     [HttpPost]
     public async Task<IResult> Post([FromBody] CreateUserRequest request)
@@ -76,48 +83,81 @@ public class UserController : ControllerBase
         {
             return Results.ValidationProblem(validationResult.ToDictionary());
         }
-        
+
         var newUserId = await _createUserService.Execute(CreateUserCommandFactory.Create(request));
-        return Results.Created($"/user/{newUserId}",newUserId);
+        return Results.Created($"/user/{newUserId}", newUserId);
     }
     [HttpDelete("{id}")]
     public async Task<IResult> Delete(Guid id)
     {
-        await _deleteUserService.Execute(DeleteUserCommandFactory.Create(id));
+        try
+        {
+            await _deleteUserService.Execute(DeleteUserCommandFactory.Create(id));
+        }
+        catch (KeyNotFoundException)
+        {
+            return Results.NotFound($"User with ID {id} not found.");
+        }
         return Results.Ok();
     }
     [HttpPut("{id}")]
-    public async Task<IResult> Put(Guid id, [FromBody] UpdateUserCommand command)
+    public async Task<IResult> Put(Guid id, [FromBody] UpdateUserRequest request)
     {
-        if (id != command.Id)
-            return Results.BadRequest();
-        
-        await _updateUserService.Execute(command);
-        return Results.Ok();
+        UpdateUserCommand command = new UpdateUserCommand(id, request.Name, request.Email);
+        try
+        {
+            await _updateUserService.Execute(command);
+            return Results.Ok();
+        }
+        catch (KeyNotFoundException)
+        {
+            return Results.NotFound($"User with ID {id} not found.");
+        }
     }
     [HttpGet("{userId}/tweets")]
     public async Task<IResult> GetUserTweets(Guid userId)
     {
-
-        var tweets = await _getUserTweetsService.Execute(GetUserTweetsQueryFactory.Create(userId));
-        return Results.Ok(tweets);
+        try
+        {
+            GetUserTweetsDto? GetUserTweetsDto = await _getUserTweetsService.Execute(GetUserTweetsQueryFactory.Create(userId));
+            GetUserTweetsResponse response = new(userId, GetUserTweetsDto.Tweets.Select(UserTweetResponseFactory.Create));
+            return Results.Ok(GetUserTweetsDto);
+        }
+        catch (KeyNotFoundException)
+        {
+            return Results.NotFound($"User with ID {userId} not found.");
+        }
     }
     [HttpPost("{userId}/follow")]
     public async Task<IResult> FollowUser(Guid userId, FollowUserRequest followUserDto)
     {
-        if(userId.Equals(followUserDto.UserToBeFollowedId))
+        if (userId.Equals(followUserDto.UserToBeFollowedId))
             return Results.BadRequest("You cannot follow yourself.");
-            
-        FollowUserCommand followUserCommand = FollowUserCommandFactory.Create(userId, followUserDto); 
-        await _followUserService.Execute(followUserCommand);
-        return Results.Ok();
+
+        FollowUserCommand followUserCommand = FollowUserCommandFactory.Create(userId, followUserDto);
+        try
+        {
+            await _followUserService.Execute(followUserCommand);
+            return Results.Ok();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return Results.NotFound(ex.Message);
+        }
     }
     [HttpGet("{userId}/followed")]
     public async Task<IResult> GetFollowed(Guid userId)
     {
-        GetFollowedQuery getFollowedQuery = GetFollowedQueryFactory.Create(userId); 
-        Application.UseCases.Users.Queries.GetFollowed.GetFollowedDto? users = await _getFollowedService.Execute(getFollowedQuery);
-        var usersResponse = GetFollowedResponseFactory.Create(users);
-        return Results.Ok(usersResponse);
+        GetFollowedQuery getFollowedQuery = GetFollowedQueryFactory.Create(userId);
+        try
+        {
+            Application.UseCases.Users.Queries.GetFollowed.GetFollowedDto? users = await _getFollowedService.Execute(getFollowedQuery);
+            var usersResponse = GetFollowedResponseFactory.Create(users);
+            return Results.Ok(usersResponse);
+        }
+        catch (KeyNotFoundException)
+        {
+            return Results.NotFound($"User with ID {userId} not found.");
+        }
     }
 }

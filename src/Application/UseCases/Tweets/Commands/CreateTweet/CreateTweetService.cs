@@ -12,9 +12,10 @@ public class CreateTweetService
         _tweetRepository = tweetRepository;
     }
 
-    public async Task Execute(CreateTweetCommand command)
+    public async Task<Guid> Execute(CreateTweetCommand command)
     {
         Tweet tweet = TweetFactory.Create(command);
         await _tweetRepository.AddAsync(tweet);
+        return tweet.Id;
     }
 }

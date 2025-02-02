@@ -3,11 +3,11 @@ using Web.Dto;
 
 namespace Web.Factories;
 
-internal static class TweetResponseFactory
+internal static class TimelineTweetResponseFactory
 {
-    internal static TweetResponse Create(TweetDto tweetDto)
+    internal static TimelineTweetResponse Create(TweetDto tweetDto)
     {
-        return new TweetResponse(
+        return new TimelineTweetResponse(
             userName:tweetDto.UserName,
             content: tweetDto.Content,
             date: tweetDto.Date

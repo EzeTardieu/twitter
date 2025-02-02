@@ -9,6 +9,7 @@ internal static class TweetDtoFactory
     internal static TweetDto Create(Tweet tweet)
     {
         return new TweetDto(
+            id: tweet.Id,
             content: tweet.Content,
             date: tweet.Date
         );

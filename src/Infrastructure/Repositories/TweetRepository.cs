@@ -15,6 +15,11 @@ public class TweetRepository : ITweetRepository
     }
     public async Task AddAsync(Tweet tweet)
     {
+        var user = await _dbcontext.Users.FindAsync(tweet.UserId);
+
+        if(user is null)
+            throw new KeyNotFoundException($"User with key {tweet.UserId} does not exist.");
+        
         await _dbcontext.Tweets.AddAsync(tweet);
         await _dbcontext.SaveChangesAsync();
     }
