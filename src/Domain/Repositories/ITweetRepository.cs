@@ -10,5 +10,6 @@ IAddableRepository<Tweet>,
 IDeletableRepository<Tweet>,
 IUpdatableRepository<Tweet>
 {
+    Task<int> CountAllAsync(TweetFilter tweetFilter);
     Task<IEnumerable<Tweet>> GetAllAsync(TweetFilter filter);
 }

@@ -11,12 +11,20 @@ public class TweetRepository : ITweetRepository
 
     public TweetRepository(ApplicationDbContext dbcontext)
     {
-        _dbcontext = dbcontext;  
+        _dbcontext = dbcontext;
     }
     public async Task AddAsync(Tweet tweet)
     {
         await _dbcontext.Tweets.AddAsync(tweet);
         await _dbcontext.SaveChangesAsync();
+    }
+
+    public async Task<int> CountAllAsync(TweetFilter filter)
+    {
+        return await _dbcontext.Tweets
+            .Include(tweet => tweet.User)
+            .Where(tweet => filter.UsersIds.Contains(tweet.UserId))
+            .CountAsync();
     }
 
     public Task DeleteAsync(Guid id)
@@ -33,7 +41,10 @@ public class TweetRepository : ITweetRepository
     {
         return await _dbcontext.Tweets
             .Include(tweet => tweet.User)
-            .Where(tweet => filter.UsersIds.Contains(tweet.UserId)).ToArrayAsync();
+            .Where(tweet => filter.UsersIds.Contains(tweet.UserId))
+            .Skip(filter.PaginationFilters.Offset)
+            .Take(filter.PaginationFilters.Limit)
+            .ToArrayAsync();
     }
 
     public Task<Tweet> GetAsync(Guid id)

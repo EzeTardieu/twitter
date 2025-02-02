@@ -5,9 +5,11 @@ namespace Domain.Filters;
 public class TweetFilter : IFilter
 {
     public IEnumerable<Guid> UsersIds { get; private set; }
-    
-    public TweetFilter(IEnumerable<Guid> usersIds)
+    public PaginationFilter PaginationFilters { get; private set; }
+
+    public TweetFilter(IEnumerable<Guid> usersIds, PaginationFilter paginationFilters)
     {
-        UsersIds = usersIds;        
+        UsersIds = usersIds;
+        PaginationFilters = paginationFilters;
     }
 }

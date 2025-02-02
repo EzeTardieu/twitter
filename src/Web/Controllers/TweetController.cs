@@ -45,9 +45,9 @@ public class TweetController : ControllerBase
         return Results.Created();
     }
     [HttpGet("timeline")]
-    public async Task<IResult> GetTimeline([FromQuery] Guid userId)
+    public async Task<IResult> GetTimeline([FromQuery] GetTimelineRequest getTimelineRequest)
     {
-        GetTimelineQuery getTimelineQuery = new(userId);
+        GetTimelineQuery getTimelineQuery = GetTimelineQueryFactory.Create(getTimelineRequest);
         var timeline = await _getTimelineService.Execute(getTimelineQuery);
         var timelineResponse = GetTimelineResponseFactory.Create(timeline);
         return Results.Ok(timelineResponse);

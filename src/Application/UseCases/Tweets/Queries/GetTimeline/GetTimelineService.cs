@@ -18,7 +18,9 @@ public class GetTimelineService
     public async Task<GetTimelineDto> Execute(GetTimelineQuery query)
     {
         var followedUsersIds = (await _userRepository.GetFollowed(query.UserId)).Select(user => user.Id);
-        var filteredTweets = await _tweetRepository.GetAllAsync(TweetFilterFactory.Create(followedUsersIds));
-        return GetTimelineDtoFactory.Create(filteredTweets);
+        var filter = TweetFilterFactory.Create(followedUsersIds, query);
+        var filteredTweets = await _tweetRepository.GetAllAsync(filter);
+        var totalCount = await _tweetRepository.CountAllAsync(filter);
+        return GetTimelineDtoFactory.Create(filteredTweets, totalCount);
     }
 }
