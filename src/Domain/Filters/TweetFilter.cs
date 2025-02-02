@@ -4,12 +4,16 @@ namespace Domain.Filters;
 
 public class TweetFilter : IFilter
 {
-    public IEnumerable<Guid> UsersIds { get; private set; }
     public PaginationFilter PaginationFilters { get; private set; }
+    public IEnumerable<Guid>? UsersIds { get; private set; }
 
-    public TweetFilter(IEnumerable<Guid> usersIds, PaginationFilter paginationFilters)
+    public TweetFilter(PaginationFilter paginationFilters, IEnumerable<Guid> usersIds)
     {
+        PaginationFilters = paginationFilters;
         UsersIds = usersIds;
+    }
+    public TweetFilter(PaginationFilter paginationFilters)
+    {
         PaginationFilters = paginationFilters;
     }
 }

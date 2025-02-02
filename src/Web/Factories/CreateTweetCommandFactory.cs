@@ -9,7 +9,8 @@ internal static class CreateTweetCommandFactory
     {
         return new CreateTweetCommand(
             UserId: request.UserId,
-            Content: request.Content
+            Content: request.Content,
+            Date: request.Date ?? DateTime.Now
         );
     }
 }

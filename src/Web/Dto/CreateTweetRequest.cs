@@ -8,4 +8,5 @@ public class CreateTweetRequest
     public Guid UserId { get; set; }
     [Required]
     public string Content { get; set; } = default!;
+    public DateTime? Date { get; set; }
 }

@@ -77,8 +77,8 @@ public class UserController : ControllerBase
             return Results.ValidationProblem(validationResult.ToDictionary());
         }
         
-        await _createUserService.Execute(CreateUserCommandFactory.Create(request));
-        return Results.Created();
+        var newUserId = await _createUserService.Execute(CreateUserCommandFactory.Create(request));
+        return Results.Created($"/user/{newUserId}",newUserId);
     }
     [HttpDelete("{id}")]
     public async Task<IResult> Delete(Guid id)
@@ -105,6 +105,9 @@ public class UserController : ControllerBase
     [HttpPost("{userId}/follow")]
     public async Task<IResult> FollowUser(Guid userId, FollowUserRequest followUserDto)
     {
+        if(userId.Equals(followUserDto.UserToBeFollowedId))
+            return Results.BadRequest("You cannot follow yourself.");
+            
         FollowUserCommand followUserCommand = FollowUserCommandFactory.Create(userId, followUserDto); 
         await _followUserService.Execute(followUserCommand);
         return Results.Ok();

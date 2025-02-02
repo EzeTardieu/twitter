@@ -12,9 +12,10 @@ public class CreateUserService
         _userRepository = userRepository;
     }
 
-    public async Task Execute(CreateUserCommand command)
+    public async Task<Guid> Execute(CreateUserCommand command)
     {
         User user = UserFactory.Create(command);
         await _userRepository.AddAsync(user);
+        return user.Id;
     }
 }

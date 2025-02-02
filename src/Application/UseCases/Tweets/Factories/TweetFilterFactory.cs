@@ -9,8 +9,8 @@ internal static class TweetFilterFactory
     {
         return new TweetFilter
         (
-            usersIds: followedUsersIds,
-            paginationFilters: PaginationFilterFactory.Create(getTimelineQuery)
+            paginationFilters: PaginationFilterFactory.Create(getTimelineQuery),
+            usersIds: followedUsersIds
         );
     }
 }

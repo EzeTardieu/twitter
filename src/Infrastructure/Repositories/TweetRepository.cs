@@ -21,39 +21,60 @@ public class TweetRepository : ITweetRepository
 
     public async Task<int> CountAllAsync(TweetFilter filter)
     {
-        return await _dbcontext.Tweets
-            .Include(tweet => tweet.User)
-            .Where(tweet => filter.UsersIds.Contains(tweet.UserId))
-            .CountAsync();
+        var query = _dbcontext.Tweets.AsQueryable();
+        
+        if(filter.UsersIds is not null)
+            query = query.Where(tweet => filter.UsersIds.Contains(tweet.UserId)).AsQueryable();
+        
+        return await query.CountAsync();
     }
 
-    public Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var tweet = await _dbcontext.Tweets.FindAsync(id);
+        if (tweet is null)
+            throw new KeyNotFoundException($"Tweet with key {id} does not exist.");
+        _dbcontext.Tweets.Remove(tweet);
+        await _dbcontext.SaveChangesAsync();
     }
 
-    public Task<IEnumerable<Tweet>> GetAllAsync()
+    public async Task<IEnumerable<Tweet>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        TweetFilter basicFilter = new TweetFilter(new PaginationFilter());
+        return await GetAllAsync(basicFilter);
     }
 
     public async Task<IEnumerable<Tweet>> GetAllAsync(TweetFilter filter)
     {
-        return await _dbcontext.Tweets
-            .Include(tweet => tweet.User)
-            .Where(tweet => filter.UsersIds.Contains(tweet.UserId))
+        var query = _dbcontext.Tweets.Include(tweet => tweet.User).AsQueryable();
+        
+        if(filter.UsersIds is not null)
+            query = query.Where(tweet => filter.UsersIds.Contains(tweet.UserId)).AsQueryable();
+        
+        return await query
+            .OrderByDescending(tweet => tweet.Date)
             .Skip(filter.PaginationFilters.Offset)
             .Take(filter.PaginationFilters.Limit)
             .ToArrayAsync();
     }
 
-    public Task<Tweet> GetAsync(Guid id)
+    public async Task<Tweet> GetAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var tweet = await _dbcontext.Tweets.FindAsync(id);
+        if (tweet is null)
+            throw new KeyNotFoundException($"User with key {id} does not exist.");
+
+        return tweet;
     }
 
-    public Task UpdateAsync(Tweet entity)
+    public async Task UpdateAsync(Tweet tweet)
     {
-        throw new NotImplementedException();
+        var tweetToUpdate = await _dbcontext.Tweets.FindAsync(tweet.Id);
+        if (tweetToUpdate is null)
+            throw new KeyNotFoundException($"User with key {tweet.Id} does not exist.");
+
+        _dbcontext.Tweets.Update(tweetToUpdate);
+
+        await _dbcontext.SaveChangesAsync();
     }
 }

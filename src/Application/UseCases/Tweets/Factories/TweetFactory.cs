@@ -12,7 +12,7 @@ internal static class TweetFactory
         return new Tweet(
             userId: command.UserId,
             content: command.Content,
-            date: DateTime.Now
+            date: command.Date
         );
     }
 }
