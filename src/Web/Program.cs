@@ -12,6 +12,9 @@ using Application.UseCases.Users.Queries.GetUserTweets;
 using Application.UseCases.Tweets.Commands.CreateTweet;
 using Application.UseCases.Users.Commands.FollowUser;
 using Application.UseCases.Tweets.Queries.GetTimeline;
+using FluentValidation;
+using Web.Dto;
+using Web.Validators;
 
 namespace Web;
 
@@ -51,6 +54,11 @@ public class Program
             .AddScoped<CreateTweetService>()
             .AddScoped<GetTimelineService>()
             ;
+
+        builder.Services
+            .AddScoped<IValidator<CreateTweetRequest>, CreateTweetRequestValidator>()
+            .AddScoped<IValidator<CreateUserRequest>, CreateUserRequestValidator>();
+
 
         var app = builder.Build();
 

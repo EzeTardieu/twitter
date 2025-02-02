@@ -6,9 +6,12 @@ using Application.UseCases.Users.Queries.GetFollowing;
 using Application.UseCases.Users.Queries.GetUserById;
 using Application.UseCases.Users.Queries.GetUsers;
 using Application.UseCases.Users.Queries.GetUserTweets;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Web.Dto;
 using Web.Factories;
+using Web.Validators;
 
 namespace Web.Controllers;
 
@@ -25,6 +28,7 @@ public class UserController : ControllerBase
     private readonly FollowUserService _followUserService;
     private readonly GetFollowedService _getFollowedService;
     private readonly GetUserTweetsService _getUserTweetsService;
+    private readonly IValidator<CreateUserRequest> _createUserRequestValidator;
 
     public UserController(
         ILogger<UserController> logger,
@@ -35,7 +39,8 @@ public class UserController : ControllerBase
         CreateUserService createUserService,
         FollowUserService followUserService,
         GetFollowedService getFollowedService,
-        GetUserTweetsService getUserTweetsService
+        GetUserTweetsService getUserTweetsService,
+        IValidator<CreateUserRequest> createUserRequestValidator
         )
     {
         _logger = logger;
@@ -47,61 +52,69 @@ public class UserController : ControllerBase
         _followUserService = followUserService;
         _getFollowedService = getFollowedService;
         _getUserTweetsService = getUserTweetsService;
+        _createUserRequestValidator = createUserRequestValidator;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IResult> Get()
     {
         var users = await _getUsersService.Execute(GetUsersQueryFactory.Create());
-        return Ok(users);
+        return Results.Ok(users);
     }
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
+    public async Task<IResult> Get(Guid id)
     {
         var user = await _getUserByIdService.Execute(GetUserByIdQueryFactory.Create(id));
-        return Ok(user);
+        return Results.Ok(user);
     }
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateUserCommand command)
+    public async Task<IResult> Post([FromBody] CreateUserRequest request)
     {
-        await _createUserService.Execute(command);
-        return Ok();
+        ValidationResult validationResult = await _createUserRequestValidator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            return Results.ValidationProblem(validationResult.ToDictionary());
+        }
+        
+        await _createUserService.Execute(CreateUserCommandFactory.Create(request));
+        return Results.Created();
     }
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IResult> Delete(Guid id)
     {
         await _deleteUserService.Execute(DeleteUserCommandFactory.Create(id));
-        return Ok();
+        return Results.Ok();
     }
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(Guid id, [FromBody] UpdateUserCommand command)
+    public async Task<IResult> Put(Guid id, [FromBody] UpdateUserCommand command)
     {
         if (id != command.Id)
-            return BadRequest();
+            return Results.BadRequest();
         
         await _updateUserService.Execute(command);
-        return Ok();
+        return Results.Ok();
     }
     [HttpGet("{userId}/tweets")]
-    public async Task<IActionResult> GetUserTweets(Guid userId)
+    public async Task<IResult> GetUserTweets(Guid userId)
     {
 
         var tweets = await _getUserTweetsService.Execute(GetUserTweetsQueryFactory.Create(userId));
-        return Ok(tweets);
+        return Results.Ok(tweets);
     }
     [HttpPost("{userId}/follow")]
-    public async Task<IActionResult> FollowUser(Guid userId, FollowUserRequest followUserDto)
+    public async Task<IResult> FollowUser(Guid userId, FollowUserRequest followUserDto)
     {
         FollowUserCommand followUserCommand = FollowUserCommandFactory.Create(userId, followUserDto); 
         await _followUserService.Execute(followUserCommand);
-        return Ok();
+        return Results.Ok();
     }
     [HttpGet("{userId}/followed")]
-    public async Task<IActionResult> GetFollowed(Guid userId)
+    public async Task<IResult> GetFollowed(Guid userId)
     {
         GetFollowedQuery getFollowedQuery = GetFollowedQueryFactory.Create(userId); 
         Application.UseCases.Users.Queries.GetFollowed.GetFollowedDto? users = await _getFollowedService.Execute(getFollowedQuery);
         var usersResponse = GetFollowedResponseFactory.Create(users);
-        return Ok(usersResponse);
+        return Results.Ok(usersResponse);
     }
 }
