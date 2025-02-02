@@ -15,6 +15,9 @@ using Application.UseCases.Tweets.Queries.GetTimeline;
 using FluentValidation;
 using Web.Dto;
 using Web.Validators;
+using Application.UseCases.Seeding;
+using Domain.Seeding;
+using Infrastructure.Data.Seeding;
 
 namespace Web;
 
@@ -38,6 +41,7 @@ public class Program
 
         builder.Services.AddScoped<IUserRepository,UserRepository>();
         builder.Services.AddScoped<ITweetRepository,TweetRepository>();
+        builder.Services.AddScoped<IDataSeeder, DataSeeder>();
 
         builder.Services
             .AddScoped<CreateUserService>()
@@ -54,6 +58,9 @@ public class Program
             .AddScoped<CreateTweetService>()
             .AddScoped<GetTimelineService>()
             ;
+
+        builder.Services
+            .AddScoped<SeedDataService>();
 
         builder.Services
             .AddScoped<IValidator<CreateTweetRequest>, CreateTweetRequestValidator>()
