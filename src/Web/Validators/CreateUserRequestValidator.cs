@@ -1,5 +1,5 @@
+using Application.Constants;
 using FluentValidation;
-using Web.Constants;
 using Web.Dto;
 
 namespace Web.Validators;
