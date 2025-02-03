@@ -1,0 +1,29 @@
+@startuml
+entity "usuarios" {
+  * id : INT <<PK>>
+  --
+  * nombre : VARCHAR(255)
+  * username : VARCHAR(50) <<UNIQUE>>
+  * email : VARCHAR(255) <<UNIQUE>>
+}
+
+entity "seguidores" {
+  * id_seguidor : INT <<FK>>
+  * id_seguido : INT <<FK>>
+  --
+  * PRIMARY KEY (id_seguidor, id_seguido)
+}
+
+entity "tweets" {
+  * id : INT <<PK>>
+  --
+  * id_usuario : INT <<FK>>
+  * contenido : TEXT
+  * fecha_publicacion : TIMESTAMP
+}
+
+' Relaciones
+usuarios ||--o{ tweets : "publica"
+seguidores }|--|| usuarios : "seguido"
+seguidores }|--|| usuarios : "seguidor"
+@enduml
