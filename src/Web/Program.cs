@@ -67,6 +67,7 @@ public class Program
             .AddScoped<SeedDataService>();
 
         builder.Services
+            .AddScoped<IValidator<FollowUserCommand>, FollowUserCommandValidator>()
             .AddScoped<IValidator<CreateTweetCommand>, CreateTweetCommandValidator>()
             .AddScoped<IValidator<CreateTweetRequest>, CreateTweetRequestValidator>()
             .AddScoped<IValidator<CreateUserRequest>, CreateUserRequestValidator>();
