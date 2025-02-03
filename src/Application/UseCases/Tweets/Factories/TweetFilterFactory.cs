@@ -3,9 +3,9 @@ using Domain.Filters;
 
 namespace Application.UseCases.Tweets.Factories;
 
-internal static class TweetFilterFactory
+public static class TweetFilterFactory
 {
-    internal static TweetFilter Create(IEnumerable<Guid> followedUsersIds, GetTimelineQuery getTimelineQuery)
+    public static TweetFilter Create(IEnumerable<Guid> followedUsersIds, GetTimelineQuery getTimelineQuery)
     {
         return new TweetFilter
         (
