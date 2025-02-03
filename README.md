@@ -1,6 +1,6 @@
 # Twitter
   
-    Web api que permite a usuarios crear tweets, seguir otros usuarios y ver un timeline que muestra los ultimos tweets de sus usuarios seguidos.
+Web api que permite a usuarios crear tweets, seguir otros usuarios y ver un timeline que muestra los ultimos tweets de sus usuarios seguidos.
 
 - [Twitter](#twitter)
   - [Cómo levantar el proyecto](#cómo-levantar-el-proyecto)
