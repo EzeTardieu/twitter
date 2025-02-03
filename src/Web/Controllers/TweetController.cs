@@ -20,6 +20,7 @@ public class TweetController : ControllerBase
     private readonly DeleteTweetService _deleteTweetService;
     private readonly GetTweetService _getTweetService;
     private readonly IValidator<CreateTweetRequest> _createTweetRequestValidator;
+    private readonly IValidator<GetTimelineRequest> _getTimelineRequestValidator;
 
     public TweetController(
         ILogger<TweetController> logger,
@@ -27,7 +28,8 @@ public class TweetController : ControllerBase
         GetTimelineService getTimelineService,
         DeleteTweetService deleteTweetService,
         GetTweetService getTweetService,
-        IValidator<CreateTweetRequest> createTweetRequestValidator
+        IValidator<CreateTweetRequest> createTweetRequestValidator,
+        IValidator<GetTimelineRequest> getTimelineRequestValidator 
         )
     {
         _logger = logger;
@@ -36,6 +38,7 @@ public class TweetController : ControllerBase
         _deleteTweetService = deleteTweetService;
         _getTweetService = getTweetService;
         _createTweetRequestValidator = createTweetRequestValidator;
+        _getTimelineRequestValidator = getTimelineRequestValidator;
     }
     [HttpGet("{id}")]
     public async Task<IResult> Get(Guid id)
@@ -87,6 +90,13 @@ public class TweetController : ControllerBase
     [HttpGet("timeline")]
     public async Task<IResult> GetTimeline([FromQuery] GetTimelineRequest getTimelineRequest)
     {
+        ValidationResult validationResult = await _getTimelineRequestValidator.ValidateAsync(getTimelineRequest);
+
+        if (!validationResult.IsValid)
+        {
+            return Results.ValidationProblem(validationResult.ToDictionary());
+        }
+
         GetTimelineQuery getTimelineQuery = GetTimelineQueryFactory.Create(getTimelineRequest);
         try
         {
